@@ -5,8 +5,10 @@
 
 using namespace std;
 
+
 int num;
 vector<int> divisores;
+
 
 bool is_permutation(string n)
 {
