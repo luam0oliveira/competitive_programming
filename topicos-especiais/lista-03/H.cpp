@@ -1,79 +1,83 @@
-#include <iostream>
-#include <set>
-#include <string>
-#include <algorithm>
+// https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&page=show_problem&problem=1891
+// Backtracking puro (deve-se tomar cuidado para ordenar da forma correta os codigos encontrados)
+
+#include <bits/stdc++.h>
 
 using namespace std;
 
-pair<int,char> alfabeto[100];
-set<string> solutions;
-string enc;
-int l;
+vector<string> geradas;
+vector<pair<string,string>> codes;
 
+void solve(string base, string gerada){
+	if (geradas.size() == 100 )
+		return;
+		
+	if (base.size()==0)
+		return geradas.push_back(gerada);
 
-bool solve(string palavra, int left, int right, bool zero)
-{
-    if (solutions.size() >= 100)
-        return true;
+	if (base[0] == '0' && base.size() == 1)
+		return;
 
-    if (left == right && !zero)
-    {
-        solutions.insert(palavra);
-        return true;
-    }
-    
-    if (enc[left] == '0')
-        solve(palavra, left + 1, right, true);
-    else
-    {
-        for (int i = 0; i < l; i++)
-        {
-            if (left != right-1 && ((enc[left] - '0') * 10 + enc[left + 1] - '0') == alfabeto[i].first)
-            {   
-                solve(palavra + alfabeto[i].second, left + 2, right, false);
-            }
-    
-            if ((enc[left] - '0') == alfabeto[i].first)
-            {
-                solve(palavra + alfabeto[i].second, left + 1, right, false);
-            }
-        }
-    }
-    
-    return false;
+	if (base[0] == '0')
+		return solve(base.substr(1), gerada);
+	
+	string umCarac;
+
+	vector<pair<string,string>> encont;
+
+	encont.push_back({"A", "0"});
+	encont.push_back({"A", "0"});
+
+	umCarac += base[0];
+	int i = 0, ss = codes.size();
+
+	for (;i<ss;i++)
+		if (codes[i].second == umCarac) break;
+	
+	if (i!=ss){
+		encont[0] = codes[i];
+	}
+	
+	i = 0;
+	if (base.size() > 1){
+		umCarac +=base[1];
+		for (;i<ss;i++)
+		if (codes[i].second == umCarac) break;
+	
+		if (i!=ss)
+			encont[1] = codes[i];
+	}
+	sort(encont.begin(),encont.end());
+	for (i =0;i<2;i++)
+		if (encont[i].first != "A") solve(base.substr(encont[i].second.size()), gerada + encont[i].first);
+		
 }
 
+int main(){
+	int cases = 1;
+	while(1){
+		int t; cin>>t;
+		if (t==0) break;
+		
+		codes.clear();
+		geradas.clear();
 
+		string a, code;
+		
+		while(t--){
+			cin>>a>>code;
+			codes.push_back({a, code});
+		}
+		
+		sort(codes.begin(), codes.end());
+		
+		string base;cin>>base;
 
-int main()
-{
-    int ind, cont=1;
-    char let;
-    while (true)
-    {
-        cin >> l;
-        if (l == 0) break;
-        solutions.clear();
-        for (int i = 0; i < l; i++)
-        {
-            cin >> let >> ind;
-
-            alfabeto[i] = {ind,let};
-        }
-        sort(alfabeto, alfabeto + l, [](const pair<int,char>& lhs, const pair<int,char>& rhs)
-        	{
-        		return lhs.second < rhs.second;
-        	});
-        cin >> enc;
-        solve("", 0, enc.size(), false);
-        cout<<"Case #"<<cont<<endl;
-        for (auto it = solutions.begin(); it != solutions.end(); it++)
-        {
-            cout << *it << endl;
-        }
-        cont++;
-        cout <<endl;
-    }
-
-    return 0;
+		solve(base, "");
+			
+		printf("Case #%d\n", cases++);
+		for(auto i=0;i<geradas.size();i++)
+			cout<<geradas[i]<<endl;
+		cout<<endl;
+	}
 }
