@@ -1,39 +1,42 @@
-// https://olimpiada.ic.unicamp.br/pratique/p2/2013/f2/troia/
-// componentes conexos
+// https://judge.beecrowd.com/pt/problems/view/2461
+// Ad-rock/STL
 
 #include <bits/stdc++.h>
 
 using namespace std;
 
-int main(){
-    ios::sync_with_stdio(false);
-    cin.tie(0) , cout.tie(0);
-    int n, m, a;cin>>n>>m;
-    unordered_set<int> conjuntoA;
+int main() {
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
 
-    for(int i =0;i<n;i++){
-        cin >>a;
-        conjuntoA.insert(a);
-    }
-    bool certo = true;
-    vector<int>sq;
-    unordered_set<int> um;
-    for(int i =0;i<m && certo;i++){
-        cin>>a;
+	int n, m,a;cin >> n >> m;
+	unordered_set<int> conjuntoA,conjuntoB;
+	for (int i = 0; i < n; i++) {
+		cin >> a;
+		conjuntoA.insert(a);
+	}
 
-        certo = conjuntoA.find(a) != conjuntoA.end();
-        for(int j=0;j<i;j++){
-            um.insert(a-sq[j]);
-        }
+	vector<int> jogadasB(m);
+	for (int i = 0; i < m; i++) {
+		cin >> jogadasB[i];
+	}
+	bool certo = true;
+	for (int i = 0; i < m && certo; i++) {
+		certo=false;
+		a = jogadasB[i];
 
-        auto fim = um.end();
-        if (!certo){
-            for(int j=0;j<i &&!certo;j++)
-                if (um.find(sq[j])!=fim) certo = true;
-        }
+		certo = conjuntoA.find(a) != conjuntoA.end();
 
-        sq.push_back(a);
-    }
-    if (certo) cout<<"sim";
-    else cout<<a;
+		if (!certo){
+			for (auto it = conjuntoB.begin();it!=conjuntoB.end() && !certo;it++)
+				certo = conjuntoB.find(a - *it) != conjuntoB.end();
+		}
+
+		if (certo)
+			conjuntoB.insert(a);
+	}
+
+	if (certo) cout<<"sim"<<endl;
+	else cout<<a<<endl;
+	return 0;
 }
