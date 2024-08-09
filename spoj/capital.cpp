@@ -1,5 +1,5 @@
 // https://br.spoj.com/problems/CAPITA13/
-// geometria
+// Geometria
 // O codigo comentado foi de uma solucao que desenvolvi anteriormente e estava 
 // completamente incorreta, pois so considerava lados inteiros
 

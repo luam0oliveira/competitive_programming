@@ -1,5 +1,5 @@
 // https://br.spoj.com/problems/BAPOSTAS/
-// ad-rock
+// Ad-rock
 
 #include <bits/stdc++.h>
 
