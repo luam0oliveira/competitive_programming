@@ -1,6 +1,6 @@
 */**/in
 */**/out
-*/**/a.out
+*/**/*.out
 */**/io
 */**/exe
 .vscode
