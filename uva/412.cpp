@@ -1,6 +1,9 @@
-// https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&page=submit_problem&problemid=353&category=0
-// brute-force / ad-rock
-
+/**
+ *     author: demot.r
+ *     created: 2024-09-16 22:01:49
+ *     source: https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&page=submit_problem&problemid=353&category=0
+ *     description: brute-force / ad-rock
+**/
 #include<bits/stdc++.h>
 #define ll long long
 
