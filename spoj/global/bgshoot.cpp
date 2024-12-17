@@ -7,88 +7,84 @@
 
 #include<bits/stdc++.h>
 #define ll long long
+#define ALL(x) x.begin(), x.end()
 using namespace std;
 
-const int maxN = 3e5;
+const int MAXN = 2e5;
 
-vector<int> points;
-vector<pair<int,int>> valuePoints;
-
-struct Node {
-    int l, r, max, before;
-};
-
-Node tree[maxN*4];
+int tree[4*MAXN];
+vector<int> quant;
 
 void build(int v, int l, int r) {
-    tree[v].l = l;
-    tree[v].r = r;
     if (l == r) {
-        tree[v].max = valuePoints[l].first;
-        tree[v].before = valuePoints[l].second;
+        tree[v] = quant[l];
     } else {
-        int middle = (l + r) / 2;
-        build(v*2, l, min(middle, r));
-        build(v*2 + 1, min(middle + 1, r), r);
-        tree[v].max = max(tree[v*2].max, tree[v*2+1].max);
+        int mid = (l + r) / 2;
+        build(v*2, l, mid);
+        build(v*2+1, min(mid+1,r), r);
+        tree[v] = max(tree[v*2+1], tree[v*2]);
     }
 }
 
-int find(int v, int l, int r) {
-    int left = points[tree[v].l], right = points[tree[v].r];
-    if (left > r || right < l) return -1;
+int searchhh(int v, int tl, int tr, int l, int r) {
+    if (tl > r || l > tr) return 0;
+    if (tl >= l && tr <= r) return tree[v];
 
-    if (left >= l && right <= r) return tree[v].max;
-
-    int mm = max(find(v*2, l, r), find(v*2+1, l, r));
-
-    if (tree[v].r - tree[v].l == 1 && mm == -1) {
-        return tree[v*2+1].before;
-    }
-    return mm;
+    int mid = int(tl + tr)/2;
+    return max(searchhh(v*2, tl, mid, l, r), searchhh(v*2+1, min(mid+1, tr), tr, l, r));
 }
 
-// entrada = first > 0, saida = first < 0
-unordered_map<int, pair<int,int>> input;
-
+set<int> times;
+unordered_map<int, int> compress;
+vector<int> ff;
 int main() {
     cin.tie(0);
+    cout.tie(0);
     ios_base::sync_with_stdio(0);
+
     int n;cin>>n;
-    vector<int> filter;
+    vector<pair<int,int>> inp;
     for(int i=0;i<n;i++) {
-        int a,b;cin>>a>>b;
-        input[a].first++;
-        input[b].second++;
-        filter.push_back(a);
-        filter.push_back(b);
-    }
-
-    sort(filter.begin(), filter.end());
-
-    for(int i=1;i<filter.size();i++) {
-        if (filter[i] != filter[i-1]) {
-            points.push_back(filter[i-1]);
-        }
-    }
-
-    if (filter[filter.size()-2] != filter[filter.size()-1]) points.push_back(filter[filter.size()-1]);
-
-    
-    valuePoints.push_back({input[points[0]].first, 0});
-    for(int i=1;i<points.size();i++){
-        int value = input[points[i]].first - input[points[i-1]].second + valuePoints[i-1].first; 
-        valuePoints.push_back({value, value - input[points[i]].first});
-    }
-
-
-    build(1, 0, points.size()-1);
-
-    int m;cin>>m;
-    for(int i=0;i<m;i++){
         int l,r;cin>>l>>r;
-        cout << max(0, find(1, l, r))<<endl;
+        inp.push_back({l, r});
+        times.insert(l);
+        times.insert(r);
+    }
+    
+    int q;cin>>q;
+    vector<pair<int,int>> queries(q);
+    for(int i=0;i<q;i++) {
+        int l,r;cin>>l>>r;
+        queries[i] = {l,r};
+        times.insert(l);
+        times.insert(r);
     }
 
-    return 0;
+    int i = 0;
+
+    for(auto c: times) {
+        compress[c] = i++;
+    }
+
+    quant.assign(times.size(),0);
+
+    for(auto ip: inp) {
+        quant[compress[ip.first]]++;
+        quant[compress[ip.second]+1]--;
+    }
+
+    for(int i = 1; i < quant.size();i++) {
+        quant[i]+=quant[i-1];
+    }
+
+    // for(auto c: times) {
+    //     cout <<c<< " " << compress[c] <<" " << quant[compress[c]] << endl;
+    // }
+    
+    build(1, 0, quant.size()-1);
+
+    for(auto query: queries) {
+        cout << searchhh(1, 0, quant.size()-1, compress[query.first], compress[query.second]) << endl;
+    }
 }
+
