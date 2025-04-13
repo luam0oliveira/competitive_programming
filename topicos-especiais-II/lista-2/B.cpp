@@ -24,7 +24,10 @@ int main() {
     if (count.find(0) != count.end()) 
         count.erase(count.find(0));
     for(auto p:count) {
-        if (p.second%3 && (3 - p.second % 3) > zero) ans = 0;
+        if (p.second%3 && (3 - p.second % 3) > zero) {
+            cout << zero << endl;
+            ans = 0;
+        }
         else {
             zero -=  (3 - p.second%3) % 3;
         }
